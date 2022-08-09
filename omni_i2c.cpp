@@ -17,8 +17,8 @@ void getdata(void);
 int send(char add,char dat);
 
 int main(){
-    char clockw=0xff;
-    char anticw=0x00;
+    char clockw=0xf0;
+    char anticw=0x0f;
     char sb=0x80;//ショートブレーキ用
     sig=0;
     while (true) {
