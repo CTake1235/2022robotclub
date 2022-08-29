@@ -5,29 +5,36 @@
 #include"PS3.h"
 #include"mbed_wait_api.h"
 #include <stdexcept>
+#include "QEI.h"
 #define ueMD 0x60
 #define migiMD 0x14
 #define sitaMD 0x10
 #define hidariMD 0x16
 I2C i2c (D14,D15);
 PS3 ps3 (A0,A1);
-DigitalOut sig(D13);
-int select,start,ue,migi,sita,hidari,L1,R1;
+DigitalOut sig(D13);//緊急停止用
+QEI encoder( D7, D8, D9, 2048, QEI::X2_ENCODING);
+//QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
+int select,start,ue,migi,sita,hidari,L1,R1,sankaku;
 void getdata(void);
 int send(char add,char dat);
+void autorun(void);//中央を自動でとる
 
 int main(){
-    char clockw=0xf0;
-    char anticw=0x0f;
+    char clockw=0xc9;
+    char anticw=0x36;
     char sb=0x80;//ショートブレーキ用
     sig=0;
     while (true) {
         getdata();
-        if(select==1){
+        if(select == 1){
             sig=1;
         }
         else if(start == 1){
             sig=0;
+        }
+        else if(sankaku == 1){
+            autorun();
         }
         else if(ue == 1){
             send(ueMD,sb);
@@ -36,24 +43,24 @@ int main(){
             send(hidariMD,clockw);
 
         }
-        else if(migi == 1){
+        /*else if(migi == 1){
             send(ueMD,clockw);
             send(migiMD,sb);
             send(sitaMD,anticw);
             send(hidariMD,sb);
-        }
+        }*/
         else if(sita == 1){
             send(ueMD,sb);
             send(migiMD,clockw);
             send(sitaMD,sb);
             send(hidariMD,anticw);
         }
-        else if(hidari == 1){
+        /*else if(hidari == 1){
             send(ueMD,anticw);
             send(migiMD,sb);
             send(sitaMD,clockw);
             send(hidariMD,sb);
-        }
+        }*/
         else if(R1 == 1){
             send(ueMD,clockw);
             send(migiMD,clockw);
@@ -80,12 +87,15 @@ void getdata(void){
     sita=ps3.getButtonState(PS3::sita);
     hidari=ps3.getButtonState(PS3::hidari);
 
+    sankaku=ps3.getButtonState(PS3::sankaku);
+
     R1=ps3.getButtonState(PS3::R1);
     L1=ps3.getButtonState(PS3::L1);
 
     select=ps3.getSELECTState();
     start=ps3.getSTARTState();
 }
+
 int send(char add,char dat){  
     i2c.start();
     i2c.write(add);
@@ -93,4 +103,19 @@ int send(char add,char dat){
     i2c.stop();
     wait_us(15000);
     return 0;
+}
+
+void autorun(void){
+    encoder.reset();
+    int pulse=0;
+    while(true){
+        pulse=encoder.getPulses();
+        if(pulse >= 0){//数値はあとで計測する！！！
+            break;
+        }
+        else{
+            send(migiMD,0xf0);
+            send(hidariMD,0x0f);
+        }
+    }
 }
