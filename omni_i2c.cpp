@@ -13,9 +13,9 @@
 I2C i2c (D14,D15);
 PS3 ps3 (A0,A1);
 DigitalOut sig(D13);//緊急停止用
-QEI encoder( D7, D8, D9, 2048, QEI::X2_ENCODING);
+QEI encoder( D8, D9, D10, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
-int select,start,ue,migi,sita,hidari,L1,R1,sankaku;
+int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu;
 void getdata(void);
 int send(char add,char dat);
 void autorun(void);//中央を自動でとる
@@ -88,6 +88,7 @@ void getdata(void){
     hidari=ps3.getButtonState(PS3::hidari);
 
     sankaku=ps3.getButtonState(PS3::sankaku);
+    batu=ps3.getButtonState(PS3::batu);
 
     R1=ps3.getButtonState(PS3::R1);
     L1=ps3.getButtonState(PS3::L1);
@@ -109,13 +110,20 @@ void autorun(void){
     encoder.reset();
     int pulse=0;
     while(true){
-        pulse=encoder.getPulses();
-        if(pulse >= 0){//数値はあとで計測する！！！
+        getdata();
+        pulse = encoder.getPulses();
+        printf("%d\n",pulse);
+        if(pulse >= 31403 || pulse <= -31403){//数値はあとで計測する！！！
+            break;
+        }
+        else if(batu == 1){
+            pulse=0;
             break;
         }
         else{
             send(migiMD,0xf0);
             send(hidariMD,0x0f);
         }
+        wait_us(20000);
     }
 }
