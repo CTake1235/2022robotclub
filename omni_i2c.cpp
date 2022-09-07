@@ -13,7 +13,6 @@
 I2C i2c (D14,D15);
 PS3 ps3 (A0,A1);
 DigitalOut sig(D13);//緊急停止用
-PwmOut green(D3),red(D5),blue(D6);
 QEI encoder( D8, D9, D10, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
 int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu;
@@ -27,7 +26,6 @@ int main(){
     char anticw=0x36;
     char sb=0x80;//ショートブレーキ用
     sig=0;
-    ledcheck();
     while (true) {
         getdata();
         if(select == 1){
@@ -46,24 +44,24 @@ int main(){
             send(hidariMD,clockw);
 
         }
-        /*else if(migi == 1){
+        else if(migi == 1){
             send(ueMD,clockw);
             send(migiMD,sb);
             send(sitaMD,anticw);
             send(hidariMD,sb);
-        }*/
+        }
         else if(sita == 1){
             send(ueMD,sb);
             send(migiMD,clockw);
             send(sitaMD,sb);
             send(hidariMD,anticw);
         }
-        /*else if(hidari == 1){
+        else if(hidari == 1){
             send(ueMD,anticw);
             send(migiMD,sb);
             send(sitaMD,clockw);
             send(hidariMD,sb);
-        }*/
+        }
         else if(R1 == 1){
             send(ueMD,clockw);
             send(migiMD,clockw);
@@ -105,7 +103,7 @@ int send(char add,char dat){
     i2c.write(add);
     i2c.write(dat);
     i2c.stop();
-    wait_us(15000);
+    wait_us(50000);
     return 0;
 }
 
@@ -128,16 +126,5 @@ void autorun(void){
             send(hidariMD,0x0f);
         }
         wait_us(20000);
-    }
-}
-
-void ledcheck(){
-    while (true) {
-        for(double i=0;;i++){
-            green=0.5*sin(i*PI/180)+0.5;
-            red=0.5*sin((i+120)*PI/180)+0.5;
-            blue=0.5*sin((i+240)*PI/180)+0.5;
-            wait_us(8000);
-        }
     }
 }
