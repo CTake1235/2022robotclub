@@ -6,6 +6,7 @@
 #include"mbed_wait_api.h"
 #include <stdexcept>
 #include "QEI.h"
+#include "time.h"
 #define ueMD 0x60
 #define migiMD 0x14
 #define sitaMD 0x10
@@ -108,6 +109,9 @@ int send(char add,char dat){
 }
 
 void autorun(void){
+    clock_t cstart,cend;
+    double time,rpm;
+    cstart = clock();
     encoder.reset();
     int pulse=0;
     while(true){
@@ -124,6 +128,11 @@ void autorun(void){
         else{
             send(migiMD,0xf0);
             send(hidariMD,0x0f);
+            cend = clock();
+            time = cend - start;
+            rpm = (pulse/4096)*(time*60/CLOCKS_PER_SEC);
+            //pulse/4096で回転数、time/CLOCKS_PER_SECで秒、60をかけて毎分になおす
+            printf("%lf",rpm);
         }
         wait_us(20000);
     }
