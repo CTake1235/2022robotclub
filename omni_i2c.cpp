@@ -7,9 +7,9 @@
 #include <stdexcept>
 #include "QEI.h"
 #include "time.h"
-#define ueMD 0x60
-#define migiMD 0x14
-#define sitaMD 0x10
+#define ueMD 0x14
+#define migiMD 0x20
+#define sitaMD 0x60
 #define hidariMD 0x16
 I2C i2c (D14,D15);
 PS3 ps3 (A0,A1);
