@@ -1,11 +1,12 @@
 #include "mbed.h"
 #include "sonMD.h"
 #include "PS3.h"
+#include "QEI.h"
 #include <mbed_wait_api.h>
 
 DigitalOut sig(D13);
 PS3 ps3(A0,A1);
-sonMD injection(D9,D10,0.003);
+sonMD injection(D9,D10,0.00015);
 //sonMD name(PWMピン,PWMピン,周期)
 
 void getdata(void);

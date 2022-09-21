@@ -1,13 +1,14 @@
 #include "mbed.h"
-PwmOut p1(D9),p2(D10);
 DigitalOut sig(D13);
+PwmOut p1(D9),p2(D10);
 
 int main(){
-    p1.period_us(3000);
-    p2.period_us(3000);
-    sig=0;
+    p1.period_us(1500);
+    p2.period_us(1500);
+    sig = 0;
+    bool state = 0;
     while (true) {
-        p1=0;
-        p2=0.2;
+        p1.write(0);
+        p2.write(0.3);
     }
 }
