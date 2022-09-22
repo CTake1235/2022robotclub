@@ -6,7 +6,10 @@
 
 DigitalOut sig(D13);
 PS3 ps3(A0,A1);
-sonMD injection(D9,D10,0.00015);
+sonMD right_outside(D2,D3,0.00015);//右の外側
+sonMD right_inside(D4,D5,0.00015);//右の内側
+sonMD left_inside(D6,D7,0.00015);//左の内側
+sonMD left_outside(D8,D9,0.00015);//左の外側
 //sonMD name(PWMピン,PWMピン,周期)
 
 void getdata(void);
@@ -41,10 +44,16 @@ int main(){
         }
 
         if(state == 1){
-            injection.move_p2(0.02, dat);
+            right_outside.move_p2(0.02, dat);
+            right_inside.move_p2(0.02, dat);
+            left_inside.move_p2(0.02, dat);
+            left_outside.move_p2(0.02, dat);
         }
         else{
-            injection.stop();
+            right_outside.stop();
+            right_inside.stop();
+            left_inside.stop();
+            left_outside.stop();
         }
     }
 }
