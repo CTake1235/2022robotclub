@@ -14,7 +14,7 @@ sonMD left_outside(D8,D9,0.00015);//左の外側
 
 void getdata(void);
 void wait_ms(int t);
-int ue,sita,maru,batu,sankaku,start;
+int maru,batu,sankaku,start;
 
 int main(){
     sig = 0;
