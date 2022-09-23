@@ -9,7 +9,7 @@ PS3 ps3(A0,A1);
 sonMD right_outside(D2,D3,0.00015);//右の外側
 sonMD right_inside(D4,D5,0.00015);//右の内側
 sonMD left_inside(D6,D7,0.00015);//左の内側
-sonMD left_outside(D9,D10,0.00015);//左の外側
+sonMD left_outside(D8,D9,0.00015);//左の外側
 //sonMD name(PWMピン,PWMピン,周期)
 
 void getdata(void);
