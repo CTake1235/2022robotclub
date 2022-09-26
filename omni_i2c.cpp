@@ -17,9 +17,10 @@ PS3 ps3 (A0,A1);
 DigitalOut sig(D13);//緊急停止用
 QEI encoder( D8, D9, D10, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
-sonMD right(D3,D4,0.00015);
-sonMD left(D5,D6,0.00015);
-int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu;
+sonMD right(D3,NC,0.00015);
+sonMD left(D5,NC,0.00015);
+sonMD reload(D7,NC,0.00015);
+int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu,maru,sikaku;
 void getdata(void);
 int send(char add,char dat);
 void autorun(void);//中央を自動でとる
@@ -78,15 +79,29 @@ int main(){
             send(sitaMD,anticw);
             send(hidariMD,anticw);
         }
+        else if(maru == 1){
+            right.move_p1(0.02,0.5);
+            left.move_p1(0.02,0.5);
+        }
+        else if(sikaku == 1){
+            reload.move_p1(0.02,0.2);
+        }
         else{
             send(ueMD,sb);
             send(migiMD,sb);
             send(sitaMD,sb);
             send(hidariMD,sb); 
+
+            right.stop();
+            left.stop();
+            reload.stop();
         }
     }
 }
 void getdata(void){
+    select=ps3.getSELECTState();
+    start=ps3.getSTARTState();
+
     ue=ps3.getButtonState(PS3::ue);
     migi=ps3.getButtonState(PS3::migi);
     sita=ps3.getButtonState(PS3::sita);
@@ -98,8 +113,8 @@ void getdata(void){
     R1=ps3.getButtonState(PS3::R1);
     L1=ps3.getButtonState(PS3::L1);
 
-    select=ps3.getSELECTState();
-    start=ps3.getSTARTState();
+    maru=ps3.getButtonState(PS3::maru);
+    sikaku=ps3.getButtonState(PS3::sikaku);
 }
 
 int send(char add,char dat){  
