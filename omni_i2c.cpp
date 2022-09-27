@@ -15,16 +15,17 @@
 I2C i2c (D14,D15);
 PS3 ps3 (A0,A1);
 DigitalOut sig(D13);//緊急停止用
-QEI encoder( D8, D9, D10, 2048, QEI::X2_ENCODING);
+QEI encoder( D9, D10, NC, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
 sonMD right(D3,NC,0.00015);
-sonMD left(D5,NC,0.00015);
-sonMD reload(D7,NC,0.00015);
+sonMD left(D4,NC,0.00015);
+sonMD reload(D5,NC,0.00015);
+DigitalOut green(D6),red(D7),blue(D8);
 int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu,maru,sikaku;
 void getdata(void);
 int send(char add,char dat);
 void autorun(void);//中央を自動でとる
-void ledcheck(void);
+void led_enable(void);
 
 int main(){
     char clockw=0xc9;
@@ -32,6 +33,7 @@ int main(){
     char sb=0x80;//ショートブレーキ用
     sig=0;
     while (true) {
+        led_enable();
         getdata();
         if(select == 1){
             sig=1;
@@ -156,3 +158,8 @@ void autorun(void){
     }
 }
 
+void led_enable(void){
+    green = 1;
+    red = 1;
+    blue = 0;
+}
