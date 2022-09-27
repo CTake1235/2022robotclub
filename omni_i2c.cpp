@@ -49,7 +49,6 @@ int main(){
             send(migiMD,anticw);
             send(sitaMD,sb);
             send(hidariMD,clockw);
-
         }
         else if(migi == 1){
             send(ueMD,clockw);
@@ -101,22 +100,22 @@ int main(){
     }
 }
 void getdata(void){
-    select=ps3.getSELECTState();
-    start=ps3.getSTARTState();
+    select = ps3.getSELECTState();
+    start = ps3.getSTARTState();
 
-    ue=ps3.getButtonState(PS3::ue);
-    migi=ps3.getButtonState(PS3::migi);
-    sita=ps3.getButtonState(PS3::sita);
-    hidari=ps3.getButtonState(PS3::hidari);
+    ue = ps3.getButtonState(PS3::ue);
+    migi = ps3.getButtonState(PS3::migi);
+    sita = ps3.getButtonState(PS3::sita);
+    hidari = ps3.getButtonState(PS3::hidari);
 
-    sankaku=ps3.getButtonState(PS3::sankaku);
-    batu=ps3.getButtonState(PS3::batu);
+    sankaku = ps3.getButtonState(PS3::sankaku);
+    batu = ps3.getButtonState(PS3::batu);
 
-    R1=ps3.getButtonState(PS3::R1);
-    L1=ps3.getButtonState(PS3::L1);
+    R1 = ps3.getButtonState(PS3::R1);
+    L1 = ps3.getButtonState(PS3::L1);
 
-    maru=ps3.getButtonState(PS3::maru);
-    sikaku=ps3.getButtonState(PS3::sikaku);
+    maru = ps3.getButtonState(PS3::maru);
+    sikaku = ps3.getButtonState(PS3::sikaku);
 }
 
 int send(char add,char dat){  
