@@ -8,7 +8,7 @@
 #define spindelay 0.02
 #define reloadPW  0.30
 
-DigitalOut       sig(D13);
+
 UnbufferedSerial raspi(D0,D1,9600);
 sonMD            right_outside(D2,NC,0.00015);//右の外側
 sonMD            right_inside(D3,NC,0.00015);//右の内側
@@ -18,7 +18,12 @@ sonMD            left_outside(D5,NC,0.00015);//左の外側
 sonMD            ro_reload(D6,D7,0.00015);
 sonMD            ri_reload(D8,D9,0.00015);
 sonMD            li_reload(D10,D11,0.00015);
-sonMD            lo_reload(PB_14,PB_15,0.00015);
+sonMD            lo_reload(D12,D13,0.00015);
+
+QEI              ro_rori(PC_8, PC_6, NC, 2048, QEI::X2_ENCODING);
+QEI              ri_rori(PC_5, PA_12, NC, 2048, QEI::X2_ENCODING);
+QEI              li_rori(PB_12, PB_2, NC, 2048, QEI::X2_ENCODING);
+QEI              lo_rori(PB_1, PB_15, NC, 2048, QEI::X2_ENCODING);
 
 void wait_ms(int t);
 void shot_all(void);
