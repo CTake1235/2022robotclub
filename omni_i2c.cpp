@@ -13,20 +13,19 @@
 #define sitaMD 0x70
 #define hidariMD 0x10
 I2C              i2c(D14,D15);
+UnbufferedSerial raspi(D0,D1,9600);
 DigitalOut       sig(D13);//緊急停止用
 QEI              encoder( D9, D10, NC, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
-sonMD            right(D3,NC,0.00015);
-sonMD            left(D4,NC,0.00015);
-sonMD            reload(D5,NC,0.00015);
 DigitalOut       green(D6), red(D7), blue(D8);
-UnbufferedSerial raspi(D0,D1,9600);
+
 
 void send(char add,char dat);
 void autorun(int raspi_dat);//中央を自動でとる
 void led_enable(void);
 
 int main(){
+    raspi.format(8, BufferedSerial::None, 1);
     char clockw = 0xc9;
     char anticw = 0x36;
     static char data;
