@@ -18,6 +18,7 @@ QEI        encoder( D9, D10, NC, 2048, QEI::X2_ENCODING);//QEI 任意の名前( 
 DigitalOut green(D6),
            red(D7),
            blue(D8);
+            
 int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu;
 void getdata(void);
 int send(char add,char dat);
