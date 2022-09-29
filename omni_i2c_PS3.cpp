@@ -2,22 +2,23 @@
 //clockwは時計回り、anticwは反時計回り
 
 #include "mbed.h"
-#include"PS3.h"
-#include"mbed_wait_api.h"
+#include "PS3.h"
+#include "mbed_wait_api.h"
 #include <stdexcept>
 #include "QEI.h"
 #include "time.h"
-#define ueMD 0x60
-#define migiMD 0x50
-#define sitaMD 0x70
+#define ueMD     0x60
+#define migiMD   0x50
+#define sitaMD   0x70
 #define hidariMD 0x10
-I2C i2c (D14,D15);
-PS3 ps3 (A0,A1);
+I2C        i2c (D14,D15);
+PS3        ps3 (A0,A1);
 DigitalOut sig(D13);//緊急停止用
-QEI encoder( D9, D10, NC, 2048, QEI::X2_ENCODING);
-//QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
-DigitalOut green(D6),red(D7),blue(D8);
-int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu,maru,sikaku;
+QEI        encoder( D9, D10, NC, 2048, QEI::X2_ENCODING);//QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
+DigitalOut green(D6),
+           red(D7),
+           blue(D8);
+int select,start,ue,migi,sita,hidari,L1,R1,sankaku,batu;
 void getdata(void);
 int send(char add,char dat);
 void autorun(void);//中央を自動でとる
@@ -99,9 +100,6 @@ void getdata(void){
 
     R1=ps3.getButtonState(PS3::R1);
     L1=ps3.getButtonState(PS3::L1);
-
-    maru=ps3.getButtonState(PS3::maru);
-    sikaku=ps3.getButtonState(PS3::sikaku);
 }
 
 int send(char add,char dat){  
