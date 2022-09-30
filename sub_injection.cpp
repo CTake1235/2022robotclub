@@ -3,10 +3,7 @@
 #include "PS3.h"
 #include "QEI.h"
 #include <mbed_wait_api.h>
-
-#define shotPW    0.76 
-#define spindelay 0.02
-#define reloadPW  0.30
+#include "time.h"
 
 
 UnbufferedSerial raspi(D0,D1,9600);
@@ -30,39 +27,66 @@ void shot_all(void);
 void stop_all(void);
 void reload(void);
 void reload_back(void);
-int maru,batu,sankaku,start;
+
+double shotPW = 0.95;
+double spindelay = 0.02;
+double reloadPW = 0.30;
 
 int main(){
-    sig = 0;
     int         res;
     static char data;
-
     bool state = 0;
     bool rlstate = 0;
+    raspi.format(8, BufferedSerial::None, 1);
     while (true){
         res = raspi.read(&data,9);
         if(res == 1){
             switch (int(data)) {
-            case 1:
-                state = 1;//shot
+            case 9://shot
+                state = 1;
                 break;
-            case 2:
-                reload();//reload
-                break;
-            
-            case 3:
+            case 10:
                 reload_back();//reload back
                 break;
-            case 4:
+            case 11:
+                reload();//reload
+                break;
+            case 12:
                 state = 0;
+                break;
+            default:
+                ro_reload.stop();
+                ri_reload.stop();
+                li_reload.stop();
+                lo_reload.stop();
             }
         }
 
         if(state == 1){
-            right_outside.move_p1(spindelay,shotPW);
-            right_inside.move_p1(spindelay,shotPW);
-            left_inside.move_p1(spindelay,shotPW);
-            left_outside.move_p1(spindelay,shotPW);
+            clock_t cstart, cend;
+            int pulse[4];//ro,ri,li,lo
+            int rpm[4];//same as pulse
+
+            right_outside.move_p2(spindelay,shotPW);
+            right_inside.move_p2(spindelay,shotPW);
+            left_inside.move_p2(spindelay,shotPW);
+            left_outside.move_p2(spindelay,shotPW);
+
+            cstart = clock();
+
+            pulse[0] = ro_rori.getPulses();
+            pulse[1] = ri_rori.getPulses();
+            pulse[2] = li_rori.getPulses();
+            pulse[3] = lo_rori.getPulses();
+
+            cend = clock();
+            double time = cend - cstart;
+            for(int i = 0; i < 4; i++){
+                rpm[i] = (pulse[i]/4096)*(time*60/CLOCKS_PER_SEC);
+                if(rpm[i] > 1500){//maybe
+                    shotPW -= 0.02;                    
+                }
+            }
         }
         else{
             right_outside.stop();

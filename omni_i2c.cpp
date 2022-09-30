@@ -37,48 +37,45 @@ int main(){
         led_enable();
         raspi.read(&data,9);
         if(res == 1){
-            switch(data){
-                case 1://starting autorun(option)
-                    autorun(data);
-                    break;
-                case 2:
-                    autorun(data);
-                    break;
-                case 3://move to ue
+            switch(int(data)){
+                case 1://move to ue
                     send(ueMD,sb);
                     send(migiMD,anticw);
                     send(sitaMD,sb);
                     send(hidariMD,clockw);
                     break;
-                case 4://move to migi 
+                case 2://move to sita
+                    send(ueMD,sb);
+                    send(migiMD,clockw);
+                    send(sitaMD,sb);
+                    send(hidariMD,anticw);
+                    break;
+                case 3://move to migi
                     send(ueMD,clockw);
                     send(migiMD,sb);
                     send(sitaMD,anticw);
                     send(hidariMD,sb); 
                     break;
-                case 5://move to sita
-                    send(ueMD,sb);
-                    send(migiMD,clockw);
-                    send(sitaMD,sb);
-                    send(hidariMD,anticw);
-                    break;
-                case 6://move to hidari
+                case 4://move to hidari
                     send(ueMD,anticw);
                     send(migiMD,sb);
                     send(sitaMD,clockw);
                     send(hidariMD,sb);
-                    break;
-                case 7://turn clockwise
+                    break;             
+                case 5://turn clockwise
                     send(ueMD,clockw);
                     send(migiMD,clockw);
                     send(sitaMD,clockw);
                     send(hidariMD,clockw);
                     break;
-                case 8://turn anti_clockwise
+                case 7://turn anti-clockwise
                     send(ueMD,anticw);
                     send(migiMD,anticw);
                     send(sitaMD,anticw);
                     send(hidariMD,anticw);
+                    break;
+                case 11:
+                    autorun(data);
                     break;
                 default:
                     send(ueMD,sb);
@@ -110,7 +107,7 @@ void autorun(int raspi_dat){
         pulse = encoder.getPulses();
         printf("%d\n",pulse);
         switch (raspi_dat) {
-            case 1:
+            case 11:
                 if(pulse <= 31403 || pulse >= -31403){//数値はあとで計測する！！！
                 send(migiMD,0xf0);
                 send(hidariMD,0x0f);
@@ -120,7 +117,7 @@ void autorun(int raspi_dat){
                 //pulse/4096で回転数、time/CLOCKS_PER_SECで秒、60をかけて毎分になおす
                 printf("%lf",rpm);
                 }
-            case 2:
+            default:
                 break;
         }
     }
