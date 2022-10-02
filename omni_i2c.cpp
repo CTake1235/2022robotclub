@@ -15,7 +15,7 @@
 I2C              i2c(D14,D15);
 UnbufferedSerial raspi(D0,D1,9600);
 DigitalOut       sig(D13);//緊急停止用
-QEI              encoder( D9, D10, NC, 2048, QEI::X2_ENCODING);
+QEI              encoder(D9, D10, NC, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
 DigitalOut       green(D6), red(D7), blue(D8);
 

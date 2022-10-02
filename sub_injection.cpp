@@ -7,39 +7,37 @@
 
 
 UnbufferedSerial raspi(D0,D1,9600);
-sonMD            right_outside(D2,NC,0.00015);//右の外側
-sonMD            right_inside(D3,NC,0.00015);//右の内側
-sonMD            left_inside(D4,NC,0.00015);//左の内側
-sonMD            left_outside(D5,NC,0.00015);//左の外側
 
-sonMD            ro_reload(D6,D7,0.00015);
-sonMD            ri_reload(D8,D9,0.00015);
-sonMD            li_reload(D10,D11,0.00015);
-sonMD            lo_reload(D12,D13,0.00015);
+sonMD            right_outside(D2,D3,0.00015);//右の外側
+sonMD            right_inside(D4,D5,0.00015);//右の内側
+sonMD            left_inside(D6,D7,0.00015);//左の内側
+sonMD            left_outside(D8,D9,0.00015);//左の外側
 
-QEI              ro_rori(PC_8, PC_6, NC, 2048, QEI::X2_ENCODING);
-QEI              ri_rori(PC_5, PA_12, NC, 2048, QEI::X2_ENCODING);
-QEI              li_rori(PB_12, PB_2, NC, 2048, QEI::X2_ENCODING);
-QEI              lo_rori(PB_1, PB_15, NC, 2048, QEI::X2_ENCODING);
+sonMD            ro_reload(D10,D11,0.00015);
+sonMD            ri_reload(D12,D13,0.00015);
+sonMD            li_reload(PC_8,PC_6,0.00015);
+sonMD            lo_reload(PA_11,PB_2,0.00015);
 
+QEI              ro_rori(PB_12,PB_1,NC, 2048, QEI::X2_ENCODING);
+QEI              ri_rori(PC_5, PA_12, NC, 2048, QEI::X2_ENCODING);//PC_5
+QEI              li_rori(PB_15, PB_14, NC, 2048, QEI::X2_ENCODING);
+QEI              lo_rori(PB_13, PC_4, NC, 2048, QEI::X2_ENCODING);
 void wait_ms(int t);
-void shot_all(void);
-void stop_all(void);
 void reload(void);
 void reload_back(void);
 
 double shotPW = 0.95;
 double spindelay = 0.02;
-double reloadPW = 0.30;
+double reloadPW = 0.1;
 
 int main(){
     int         res;
     static char data;
     bool state = 0;
     bool rlstate = 0;
-    raspi.format(8, BufferedSerial::None, 1);
+    //raspi.format(8, BufferedSerial::None, 1);
     while (true){
-        res = raspi.read(&data,9);
+        //res = raspi.read(&data,9);
         if(res == 1){
             switch (int(data)) {
             case 9://shot
