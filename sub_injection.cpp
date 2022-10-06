@@ -31,7 +31,6 @@ int main(){
     static char data;
     bool state = 0;
     bool rlstate = 0;
-    data_from_legnwing.read(&data,9);
     while (true){
         res = data_from_legnwing.read(&data,9);
         if(res == 1){
