@@ -36,7 +36,7 @@ int main(){
     sig = 0;
     while (true) {
         led_enable();
-        raspi.read(&data,9);
+        raspi.read(&data,4);
         if(res == 1){
             switch(int(data)){
                 case 1://move to ue
