@@ -2,14 +2,14 @@
 #include "sonMD.h"
 #define wingPWadd 0x58
 
-sonMD            inside(D3,NC,0.00015);
-sonMD            outside(D4,NC,0.00015);
-sonMD            inside_reload(D5,NC,0.00015);
-sonMD            outside_reload(D6,NC,0.00015);
-UnbufferedSerial raspi(D0,D1,9600);
-I2C              i2c(D14,D15);
-DigitalIn        uelimitswitch(D5);
-DigitalIn        sitalimitswitch(D6);
+UnbufferedSerial raspi(PA_0,PA_1,9600);
+sonMD            inside(PA_6,PB_6,0.00015);
+sonMD            outside(PA_9,PA_8,0.00015);
+sonMD            inside_reload(PB_9,PB_8,0.00015);
+sonMD            outside_reload(PC_9,PC_8,0.00015);
+I2C              i2c(PC_6,PC_7);
+DigitalIn        uelimitswitch(PC_1);
+DigitalIn        sitalimitswitch(PC_0);
 
 void send(char add, char dat);
 
@@ -59,5 +59,5 @@ void send(char add, char dat){
     i2c.write(add);
     i2c.write(dat);
     i2c.stop();
-    wait_us(1500);
+    wait_us(15000);
 }
