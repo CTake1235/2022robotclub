@@ -8,17 +8,18 @@
 #include "QEI.h"
 #include "time.h"
 #include "sonMD.h"
-#define ueMD 0x60
-#define migiMD 0x50
-#define sitaMD 0x70
-#define hidariMD 0x10
-I2C              i2c(D14,D15);
-UnbufferedSerial raspi(D0,D1,9600);
-DigitalOut       sig(D13);//緊急停止用
-QEI              encoder(D9, D10, NC, 2048, QEI::X2_ENCODING);
+#define ueMD 0x50
+#define migiMD 0x52
+#define sitaMD 0x54
+#define hidariMD 0x56
+I2C              i2c(PB_8,PB_9);
+UnbufferedSerial raspi(PA_0,PA_1,9600);
+QEI              ueMD_encoder(PA_13, PA_14, NC, 2048, QEI::X2_ENCODING);
+QEI              sitaMD_encoder(PB_4, PB_5, NC, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
-DigitalOut       green(D6), red(D7), blue(D8);
+DigitalOut       green(PC_8), red(PC_6), blue(PC_9);
 
+DigitalOut sig(NC);
 
 void send(char add,char dat);
 void autorun(int raspi_dat);//中央を自動でとる
@@ -101,19 +102,20 @@ void autorun(int raspi_dat){
     double time,rpm;
     int start;
     cstart = clock();
-    encoder.reset();
-    int pulse=0;
+    ueMD_encoder.reset();
+    sitaMD_encoder.reset();
+    int uepulse = 0;int sitapulse = 0;
     while(true){
-        pulse = encoder.getPulses();
-        printf("%d\n",pulse);
+        uepulse = ueMD_encoder.getPulses();
+        sitapulse = sitaMD_encoder.getPulses();
         switch (raspi_dat) {
             case 11:
-                if(pulse <= 31403 || pulse >= -31403){//数値はあとで計測する！！！
+                if(uepulse <= 31403 || uepulse >= -31403 || sitapulse <= 31403 || sitapulse >= -31403){//数値はあとで計測する！！！
                 send(migiMD,0xf0);
                 send(hidariMD,0x0f);
                 cend = clock();
                 time = cend - start;
-                rpm = (pulse/4096)*(time*60/CLOCKS_PER_SEC);
+                rpm = (uepulse/4096)*(time*60/CLOCKS_PER_SEC);
                 //pulse/4096で回転数、time/CLOCKS_PER_SECで秒、60をかけて毎分になおす
                 printf("%lf",rpm);
                 }
