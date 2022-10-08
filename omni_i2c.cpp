@@ -17,9 +17,12 @@ UnbufferedSerial raspi(PA_0,PA_1,9600);
 QEI              ueMD_encoder(PA_13, PA_14, NC, 2048, QEI::X2_ENCODING);
 QEI              sitaMD_encoder(PB_4, PB_5, NC, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
-DigitalOut       green(PC_8), red(PC_6), blue(PC_9);
+DigitalOut       green(PC_8), 
+                 red(PC_6), 
+                 blue(PC_9);
 
-DigitalOut sig(NC);
+DigitalOut sig(PC_11);
+DigitalIn led(PD_2);
 
 void send(char add,char dat);
 void autorun(int raspi_dat);//中央を自動でとる
@@ -35,8 +38,17 @@ int main(){
     char sb = 0x80;//ショートブレーキ用
     sig = 0;
     while (true) {
-        led_enable();
         raspi.read(&data,4);
+        if(led == 1){
+            green = 1;
+            red = 1;
+            blue = 0;
+        }
+        else{
+            green = 1;
+            red = 1;
+            blue = 1;
+        }
         if(res == 1){
             switch(int(data)){
                 case 1://move to ue
@@ -123,10 +135,4 @@ void autorun(int raspi_dat){
                 break;
         }
     }
-}
-
-void led_enable(void){
-    green = 1;
-    red = 1;
-    blue = 0;
 }
