@@ -1,5 +1,6 @@
 #include "mbed.h"
 #include "sonMD.h"
+#define shotpower 0.6
 
 UnbufferedSerial raspi(PA_0,PA_1,9600);
 sonMD            inside(PB_10,PA_8,0.00015);
@@ -18,9 +19,9 @@ int main(){
         if(res == 1){
             switch(int(data)){
                 case 9://maru,inject
-                    inside.move_p1(0.02,0.7);
-                    outside.move_p1(0.02,0.7);
-                    leg.move_p1(0.02,0.7);
+                    inside.move_p1(0.02,shotpower);
+                    outside.move_p1(0.02,shotpower);
+                    leg.move_p1(0.02,shotpower);
                     break;
                 case 10://sikaku,reload back
                     inside_reload.move_p2(0.02,0.2);

@@ -12,7 +12,7 @@
 #define migiMD 0x52
 #define sitaMD 0x54
 #define hidariMD 0x56
-I2C              i2c(PB_8,PB_9);
+I2C              i2c(PB_9,PB_8);
 UnbufferedSerial raspi(PA_0,PA_1,9600);
 QEI              ueMD_encoder(PA_13, PA_14, NC, 2048, QEI::X2_ENCODING);
 QEI              sitaMD_encoder(PB_4, PB_5, NC, 2048, QEI::X2_ENCODING);

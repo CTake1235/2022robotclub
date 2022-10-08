@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "sonMD.h"
 #define wingPWadd 0x58
+#define shotpower 0.5
 
 UnbufferedSerial raspi(PA_0,PA_1,9600);
 sonMD            inside(PA_6,PB_6,0.00015);
@@ -34,9 +35,9 @@ int main(){
                     }
                     break;
                 case 9://maru,inject
-                    inside.move_p1(0.02,0.7);
-                    outside.move_p1(0.02,0.7);
-                    leg.move_p1(0.02,0.7);
+                    inside.move_p1(0.02,shotpower);
+                    outside.move_p1(0.02,shotpower);
+                    leg.move_p1(0.02,shotpower);
                     break;
                 case 10://sikaku,reload back
                     inside_reload.move_p2(0.02,0.2);
@@ -48,6 +49,7 @@ int main(){
                     outside_reload.move_p1(0.02,0.1);
                     leg_reload.move_p1(0.02,0.1);
                     break;
+                    
                 default:
                     inside.stop();
                     outside.stop();
