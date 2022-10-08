@@ -9,7 +9,7 @@ sonMD            inside_reload(PB_9,PB_8,0.00015);
 sonMD            outside_reload(PC_9,PC_8,0.00015);
 sonMD            leg(PA_11,PB_2,0.00015);
 sonMD            leg_reload(PA_10,PC_8,0.00015);
-I2C              i2c(PC_6,PC_7);
+I2C              i2c(PC_7,PC_6);
 DigitalIn        uelimitswitch(PC_1);
 DigitalIn        sitalimitswitch(PC_0);
 
