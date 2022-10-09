@@ -49,7 +49,6 @@ int main(){
                     outside_reload.move_p1(0.02,0.1);
                     leg_reload.move_p1(0.02,0.1);
                     break;
-                    
                 default:
                     inside.stop();
                     outside.stop();
