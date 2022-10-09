@@ -2,24 +2,29 @@
 //clockwは時計回り、anticwは反時計回り
 
 #include "mbed.h"
-#include "PS3.h"
 #include "mbed_wait_api.h"
+#include <cstdio>
 #include <stdexcept>
 #include "QEI.h"
 #include "time.h"
 #include "sonMD.h"
+
 #define ueMD 0x50
 #define migiMD 0x52
 #define sitaMD 0x54
 #define hidariMD 0x56
+#define clockw 0xc0
+#define anticw 0x45
+#define Rturn 0xc0
+#define Lturn 0x45
 I2C              i2c(PB_9,PB_8);
 UnbufferedSerial raspi(PA_0,PA_1,9600);
 QEI              ueMD_encoder(PA_13, PA_14, NC, 2048, QEI::X2_ENCODING);
 QEI              sitaMD_encoder(PB_4, PB_5, NC, 2048, QEI::X2_ENCODING);
 //QEI 任意の名前( A相のピン, B相のピン, Z相のピン, 分解能, 逓倍);
-DigitalOut       green(PC_8), 
-                 red(PC_6), 
-                 blue(PC_9);
+DigitalOut       green(PB_10), 
+                 red(PA_8), 
+                 blue(PA_9);
 
 DigitalOut sig(PC_11);
 DigitalIn led(PD_2);
@@ -30,26 +35,25 @@ void led_enable(void);
 
 int main(){
     raspi.format(8, BufferedSerial::None, 1);
-    char clockw = 0xc9;
-    char anticw = 0x36;
     static char data;
     int res;
     int autorun_state;
     char sb = 0x80;//ショートブレーキ用
     sig = 0;
     while (true) {
-        raspi.read(&data,4);
-        if(led == 1){
+        res = raspi.read(&data,4);
+        if(led == 0){//12V on
             green = 1;
             red = 1;
             blue = 0;
         }
-        else{
-            green = 1;
+        else{//12V off
+            green = 0;
             red = 1;
             blue = 1;
         }
         if(res == 1){
+            printf("%d\n",data);
             switch(int(data)){
                 case 1://move to ue
                     send(ueMD,sb);
@@ -76,16 +80,16 @@ int main(){
                     send(hidariMD,sb);
                     break;             
                 case 5://turn clockwise
-                    send(ueMD,clockw);
-                    send(migiMD,clockw);
-                    send(sitaMD,clockw);
-                    send(hidariMD,clockw);
+                    send(ueMD,Rturn);
+                    send(migiMD,Rturn);
+                    send(sitaMD,Rturn);
+                    send(hidariMD,Rturn);
                     break;
                 case 7://turn anti-clockwise
-                    send(ueMD,anticw);
-                    send(migiMD,anticw);
-                    send(sitaMD,anticw);
-                    send(hidariMD,anticw);
+                    send(ueMD,Lturn);
+                    send(migiMD,Lturn);
+                    send(sitaMD,Lturn);
+                    send(hidariMD,Lturn);
                     break;
                 case 11:
                     autorun(data);
