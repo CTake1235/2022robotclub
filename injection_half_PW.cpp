@@ -109,7 +109,7 @@ int main(){
                     send(wingPWadd,0x80);
                     break;
             }
-            if(state == true){//fir injection
+            if(state == true){//for injection
                 inside.move_p1(0.02,shotpower);
                 outside.move_p1(0.02,shotpower);
             }

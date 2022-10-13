@@ -90,7 +90,7 @@ int main(){
                     inside_reload.stop();
                     outside_reload.stop();
             }
-            if(state == true){//fir injection
+            if(state == true){//for injection
                 inside.move_p1(0.02,shotpower);
                 outside.move_p1(0.02,shotpower);
             }
