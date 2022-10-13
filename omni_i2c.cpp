@@ -13,10 +13,12 @@
 #define migiMD 0x52
 #define sitaMD 0x54
 #define hidariMD 0x56
-#define clockw 0xc0
+#define clockw 0xba
 #define anticw 0x45
-#define Rturn 0xc0
-#define Lturn 0x45
+#define Rturn 0x70
+#define Lturn 0x8f
+#define shortbreak 0x80
+
 I2C              i2c(PB_9,PB_8);
 UnbufferedSerial raspi(PA_0,PA_1,9600);
 QEI              ueMD_encoder(PA_13, PA_14, NC, 2048, QEI::X2_ENCODING);
@@ -26,8 +28,8 @@ DigitalOut       green(PB_10),
                  red(PA_8), 
                  blue(PA_9);
 
-DigitalOut sig(PC_11);
-DigitalIn led(PD_2);
+DigitalOut       sig(PC_11);
+DigitalIn        led(PD_2);
 
 void send(char add,char dat);
 void autorun(int raspi_dat);//中央を自動でとる
@@ -36,9 +38,8 @@ void led_enable(void);
 int main(){
     raspi.format(8, BufferedSerial::None, 1);
     static char data;
-    int res;
+    int res = 0;
     int autorun_state;
-    char sb = 0x80;//ショートブレーキ用
     sig = 0;
     while (true) {
         res = raspi.read(&data,4);
@@ -55,29 +56,29 @@ int main(){
         if(res == 1){
             printf("%d\n",data);
             switch(int(data)){
-                case 1://move to ue
-                    send(ueMD,sb);
+                case 1://go to ue
+                    send(ueMD,shortbreak);
                     send(migiMD,anticw);
-                    send(sitaMD,sb);
+                    send(sitaMD,shortbreak);
                     send(hidariMD,clockw);
                     break;
-                case 2://move to sita
-                    send(ueMD,sb);
+                case 2://go to sita
+                    send(ueMD,shortbreak);
                     send(migiMD,clockw);
-                    send(sitaMD,sb);
+                    send(sitaMD,shortbreak);
                     send(hidariMD,anticw);
                     break;
-                case 3://move to migi
+                case 3://go to migi
                     send(ueMD,clockw);
-                    send(migiMD,sb);
+                    send(migiMD,shortbreak);
                     send(sitaMD,anticw);
-                    send(hidariMD,sb); 
+                    send(hidariMD,shortbreak); 
                     break;
-                case 4://move to hidari
+                case 4://go to hidari
                     send(ueMD,anticw);
-                    send(migiMD,sb);
+                    send(migiMD,shortbreak);
                     send(sitaMD,clockw);
-                    send(hidariMD,sb);
+                    send(hidariMD,shortbreak);
                     break;             
                 case 5://turn clockwise
                     send(ueMD,Rturn);
@@ -91,15 +92,17 @@ int main(){
                     send(sitaMD,Lturn);
                     send(hidariMD,Lturn);
                     break;
-                case 11:
-                    autorun(data);
+                case 11://go diagonally,migi_ue is front
+                    send(ueMD,clockw);
+                    send(migiMD,anticw);
+                    send(sitaMD,anticw);
+                    send(hidariMD,clockw);
                     break;
                 default:
-                    send(ueMD,sb);
-                    send(migiMD,sb);
-                    send(sitaMD,sb);
-                    send(hidariMD,sb); 
-                    break;
+                    send(ueMD,shortbreak);
+                    send(migiMD,shortbreak);
+                    send(sitaMD,shortbreak);
+                    send(hidariMD,shortbreak); 
             }
         }
     }
@@ -111,32 +114,4 @@ void send(char add,char dat){
     i2c.write(dat);
     i2c.stop();
     wait_us(25000);
-}
-
-void autorun(int raspi_dat){
-    clock_t cstart,cend;
-    double time,rpm;
-    int start;
-    cstart = clock();
-    ueMD_encoder.reset();
-    sitaMD_encoder.reset();
-    int uepulse = 0;int sitapulse = 0;
-    while(true){
-        uepulse = ueMD_encoder.getPulses();
-        sitapulse = sitaMD_encoder.getPulses();
-        switch (raspi_dat) {
-            case 11:
-                if(uepulse <= 31403 || uepulse >= -31403 || sitapulse <= 31403 || sitapulse >= -31403){//数値はあとで計測する！！！
-                send(migiMD,0xf0);
-                send(hidariMD,0x0f);
-                cend = clock();
-                time = cend - start;
-                rpm = (uepulse/4096)*(time*60/CLOCKS_PER_SEC);
-                //pulse/4096で回転数、time/CLOCKS_PER_SECで秒、60をかけて毎分になおす
-                printf("%lf",rpm);
-                }
-            default:
-                break;
-        }
-    }
 }
