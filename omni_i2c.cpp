@@ -13,11 +13,13 @@
 #define migiMD 0x52
 #define sitaMD 0x54
 #define hidariMD 0x56
+
 #define clockw 0xba
 #define anticw 0x45
+#define shortbreak 0x80
+
 #define Rturn 0x70
 #define Lturn 0x8f
-#define shortbreak 0x80
 
 I2C              i2c(PB_9,PB_8);
 UnbufferedSerial raspi(PA_0,PA_1,9600);
@@ -86,16 +88,22 @@ int main(){
                     send(sitaMD,Rturn);
                     send(hidariMD,Rturn);
                     break;
+                case 6://HIBARI starts running from leftside
+                    send(ueMD,clockw);
+                    send(migiMD,anticw);
+                    send(sitaMD,anticw);
+                    send(hidariMD,clockw);
+                    break;
                 case 7://turn anti-clockwise
                     send(ueMD,Lturn);
                     send(migiMD,Lturn);
                     send(sitaMD,Lturn);
                     send(hidariMD,Lturn);
                     break;
-                case 11://go diagonally,migi_ue is front
-                    send(ueMD,clockw);
+                case 8://HIBARI starts running from rightside
+                    send(ueMD,anticw);
                     send(migiMD,anticw);
-                    send(sitaMD,anticw);
+                    send(sitaMD,clockw);
                     send(hidariMD,clockw);
                     break;
                 default:
